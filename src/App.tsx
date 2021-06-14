@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
+import AuthRoute from "./components/AuthRoute";
+import routes from "./config/routes";
 
-function App() {
+export interface IApplicationProps {}
+
+const App: React.FunctionComponent<IApplicationProps> = (props) => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Switch>
+        {routes.map((route: any, index: number) => (
+          <Route
+            key={index}
+            path={route.path}
+            exact={route.exact}
+            render={(routeProps: RouteComponentProps<any>) => {
+              if (route.protected)
+                return (
+                  <AuthRoute>
+                    <route.component {...routeProps} />
+                  </AuthRoute>
+                );
+
+              return <route.component {...routeProps} />;
+            }}
+          />
+        ))}
+      </Switch>
     </div>
   );
-}
+};
 
 export default App;
